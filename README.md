@@ -170,6 +170,22 @@ Sau khi có địa chỉ thật:
 - Thêm ảnh chia sẻ `assets/images/og-cover.jpg` (khoảng 1200×630) và bỏ chú thích dòng `og:image` với **đường dẫn đầy đủ**, để khi gửi link qua Zalo/Facebook hiện ảnh đẹp.
 - Mở `tao-link.html` trên trang thật để tạo link mời.
 
+### Tên miền riêng
+
+Thiệp chạy ở **https://yentoanwedding.website** (tên miền mua ở Porkbun, trang đặt trên GitHub Pages).
+Link cũ `duongtruong95.github.io/toan-yen/` tự chuyển sang tên miền này.
+
+- File `CNAME` ở thư mục gốc chứa tên miền. Đừng xoá, GitHub Pages dựa vào file này.
+- DNS tại Porkbun (nút **Quick DNS Config → Github** tạo sẵn):
+
+  | Loại | Host | Giá trị |
+  | --- | --- | --- |
+  | A | *(để trống)* | 185.199.108.153 |
+  | A | *(để trống)* | 185.199.109.153 |
+  | A | *(để trống)* | 185.199.110.153 |
+  | A | *(để trống)* | 185.199.111.153 |
+  | CNAME | www | duongtruong95.github.io |
+
 ## Ghi chú
 
 - Font chữ tải từ Google Fonts (Bonheur Royale, Great Vibes, Bellota Text), cần có mạng.
