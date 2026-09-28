@@ -836,6 +836,7 @@
     audio.src = m.src;
     audio.volume = typeof m.volume === 'number' ? m.volume : 0.7;
     let wanted = false, broken = false, askedAt = 0;
+    let started = false, userOff = false, stopWaiting = () => {};
 
     const ui = (on) => {
       el.classList.toggle('is-playing', on);
@@ -846,38 +847,52 @@
     };
     const warn = () => toast({ type: 'error', title: 'Chưa phát được nhạc', text: `Không mở được file "${m.src}". Hãy chép file mp3 vào thư mục assets/music/.` });
     const play = (byUser) => {
-      if (byUser) askedAt = Date.now();
+      if (byUser) { askedAt = Date.now(); userOff = false; }
       if (broken) { if (byUser) warn(); return; }
       wanted = true;
       const p = audio.play();
-      if (p && p.then) p.then(() => ui(true)).catch(() => { wanted = false; ui(false); });
+      if (p && p.then) {
+        p.then(() => { started = true; ui(true); stopWaiting(); })
+          // Bị trình duyệt chặn. Nếu một lần phát khác đã chạy được thì giữ nguyên
+          .catch(() => { if (audio.paused) { wanted = false; ui(false); } });
+      }
     };
-    const pause = () => { wanted = false; audio.pause(); ui(false); };
+    const pause = (byUser) => { wanted = false; if (byUser === true) userOff = true; audio.pause(); ui(false); };
     audio.addEventListener('error', () => {
       broken = true;
       wanted = false;
       ui(false);
       if (Date.now() - askedAt < 5000) warn();
     });
-    btn.addEventListener('click', () => (wanted ? pause() : play(true)));
+    btn.addEventListener('click', () => (wanted ? pause(true) : play(true)));
     hint.addEventListener('click', () => play(true));
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) audio.pause();
       else if (wanted && !broken) audio.play().catch(() => {});
     });
-    Music = { pause };
+    // Khách xem video thì tắt nhạc và thôi tự bật lại
+    Music = { pause: () => { stopWaiting(); pause(); } };
 
-    // Trình duyệt chỉ cho phát nhạc sau khi khách chạm/bấm lần đầu
+    // Tự phát nhạc khi mở thiệp. Đa số trình duyệt (nhất là trên điện thoại) chặn phát nhạc
+    // khi khách chưa chạm vào trang: khi đó nhạc bắt đầu ở lần chạm/bấm đầu tiên.
     if (m.autoplay !== false) {
       const evs = ['click', 'touchend', 'keydown'];
-      const stop = () => evs.forEach((t) => document.removeEventListener(t, kick, true));
+      const tryNow = () => { if (!started && !userOff && !document.hidden) play(false); };
       function kick(e) {
-        stop();
         const t = e.target;
-        if (t && t.closest && t.closest('#player, [data-yt]')) return;
-        if (!wanted) play(false);
+        // Nút loa và video tự lo phần nhạc
+        if (t && t.closest && t.closest('#player, [data-yt], video')) return;
+        tryNow();
       }
+      stopWaiting = () => {
+        evs.forEach((t) => document.removeEventListener(t, kick, true));
+        document.removeEventListener('visibilitychange', tryNow);
+      };
       evs.forEach((t) => document.addEventListener(t, kick, true));
+      document.addEventListener('visibilitychange', tryNow);
+      // Đợi trang tải xong ảnh bìa rồi mới tải nhạc
+      if (document.readyState === 'complete') tryNow();
+      else addEventListener('load', tryNow, { once: true });
     }
   }
 

@@ -115,7 +115,8 @@ Không dùng Python thì có thể nén bằng https://squoosh.app: ảnh bìa ~
 
 ### Nhạc nền
 
-Chép file mp3 vào `assets/music/nhac-nen.mp3`. Trình duyệt chặn tự phát nhạc, nên nhạc sẽ bắt đầu ở lần chạm/bấm đầu tiên của khách (`autoplay: true`) hoặc khi khách bấm nút loa.
+Chép file mp3 vào `assets/music/nhac-nen.mp3`. Với `autoplay: true`, nhạc tự phát ngay khi mở thiệp nếu trình duyệt cho phép.
+Đa số trình duyệt trên điện thoại chặn phát nhạc khi khách chưa chạm vào trang, khi đó nhạc bắt đầu ở lần chạm/bấm đầu tiên hoặc khi khách bấm nút loa.
 
 ### Video cưới
 
