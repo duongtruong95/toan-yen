@@ -47,7 +47,7 @@ window.WEDDING = {
      Chép file mp3 vào assets/music/ rồi sửa src. autoplay: true = tự phát
      sau lần chạm đầu tiên của khách (trình duyệt chặn phát nhạc khi chưa chạm). */
   music: {
-    src: "assets/music/nhac-nen.mp3",
+    src: "assets/music/nhac-nen.mp3", // Hơn Cả Yêu — Đức Phúc
     autoplay: true
   },
 
