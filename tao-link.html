@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Tạo link mời</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bellota+Text:wght@300;400;700&family=Bonheur+Royale&display=swap">
+  <style>
+    :root { --accent: #df4758; --ink: #212529; --muted: #777; --line: #e3e3e3; --bg: #f4f4f4; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 300 16px/1.6 "Bellota Text", "Segoe UI", sans-serif; }
+    main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+    h1 { margin: 0; font: 400 3rem/1.2 "Bonheur Royale", cursive; text-align: center; color: #474747; }
+    .lead { margin: 4px 0 28px; text-align: center; color: var(--muted); }
+    .card { margin-bottom: 16px; padding: 20px; border-radius: 10px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .06); }
+    label { display: block; margin-bottom: 6px; font-weight: 400; }
+    .hint { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+    input, textarea { width: 100%; padding: 9px 12px; border: 1px solid #d6d6d6; border-radius: 6px; font: inherit; font-weight: 400; background: #fff; }
+    input:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(223, 71, 88, .15); }
+    textarea { min-height: 150px; resize: vertical; }
+    code { padding: 1px 5px; border-radius: 4px; background: #f3f3f3; font-size: 13px; }
+    .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .bar strong { font-weight: 700; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1px solid #636363; border-radius: 6px; background: #636363; color: #fff; font: inherit; font-size: 14px; font-weight: 400; cursor: pointer; text-decoration: none; }
+    .btn:hover { background: #4b4b4b; }
+    .btn--ghost { background: #fff; color: #333; border-color: #d6d6d6; }
+    .btn--ghost:hover { background: #f3f3f3; }
+    .btn--accent { background: var(--accent); border-color: var(--accent); }
+    ul { margin: 0; padding: 0; list-style: none; }
+    li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+    li b { font-weight: 700; overflow-wrap: anywhere; }
+    li a.url { grid-column: 1; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+    li .actions { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 6px; }
+    .empty { margin: 8px 0 0; color: var(--muted); text-align: center; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Tạo link mời</h1>
+    <p class="lead">Mỗi khách một đường link riêng — thiệp sẽ hiện “Trân trọng kính mời + tên khách”.</p>
+
+    <section class="card">
+      <label for="base">Địa chỉ trang thiệp</label>
+      <input id="base" type="url" placeholder="https://ten-mien-cua-ban.com/">
+      <p class="hint">Sau khi đưa web lên mạng, dán địa chỉ thật vào đây.</p>
+    </section>
+
+    <section class="card">
+      <label for="names">Danh sách khách (mỗi dòng một tên)</label>
+      <textarea id="names" placeholder="Anh Tuấn &amp; Chị Mai&#10;Gia đình bác Tư&#10;Bạn Lan Anh"></textarea>
+    </section>
+
+    <section class="card">
+      <label for="tpl">Tin nhắn mẫu khi sao chép</label>
+      <textarea id="tpl" style="min-height: 90px"></textarea>
+      <p class="hint"><code>{ten}</code> sẽ được thay bằng tên khách, <code>{link}</code> bằng đường link.</p>
+    </section>
+
+    <section class="card">
+      <div class="bar">
+        <span><strong id="count">0</strong> link</span>
+        <span>
+          <button class="btn btn--ghost" id="csv" type="button">Tải file CSV</button>
+          <button class="btn btn--accent" id="copy-all" type="button">Sao chép tất cả</button>
+        </span>
+      </div>
+      <ul id="list"></ul>
+      <p class="empty" id="empty">Nhập danh sách khách để tạo link.</p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const $ = (id) => document.getElementById(id);
+      const base = $('base'), names = $('names'), tpl = $('tpl'), list = $('list');
+      const DEFAULT_TPL = 'Trân trọng kính mời {ten} đến dự lễ cưới của chúng mình. Thiệp mời online: {link}';
+      const store = {
+        get(k, d) { try { const v = localStorage.getItem('tao-link:' + k); return v == null ? d : v; } catch (e) { return d; } },
+        set(k, v) { try { localStorage.setItem('tao-link:' + k, v); } catch (e) { /* bỏ qua */ } },
+      };
+      const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+      base.value = store.get('base', location.href.replace(/tao-link\.html.*$/, ''));
+      names.value = store.get('names', '');
+      tpl.value = store.get('tpl', DEFAULT_TPL);
+
+      function rows() {
+        let url;
+        try { url = new URL(base.value.trim() || location.href.replace(/tao-link\.html.*$/, '')); } catch (e) { return []; }
+        return names.value.split('\n').map((s) => s.trim()).filter(Boolean).map((name) => {
+          const u = new URL(url.href);
+          u.searchParams.set('to', name);
+          return { name, link: u.href };
+        });
+      }
+      const message = (r) => tpl.value.split('{ten}').join(r.name).split('{link}').join(r.link);
+
+      function render() {
+        store.set('base', base.value);
+        store.set('names', names.value);
+        store.set('tpl', tpl.value);
+        const data = rows();
+        $('count').textContent = data.length;
+        $('empty').hidden = data.length > 0;
+        list.innerHTML = data.map((r, i) => `
+          <li>
+            <b>${esc(r.name)}</b>
+            <div class="actions">
+              <button class="btn btn--ghost" type="button" data-copy="${i}">Sao chép</button>
+              <a class="btn btn--ghost" href="${esc(r.link)}" target="_blank" rel="noopener">Xem</a>
+            </div>
+            <a class="url" href="${esc(r.link)}" target="_blank" rel="noopener">${esc(r.link)}</a>
+          </li>`).join('');
+      }
+
+      async function copy(text, btn) {
+        try { await navigator.clipboard.writeText(text); }
+        catch (e) {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); } catch (err) { /* bỏ qua */ }
+          ta.remove();
+        }
+        const old = btn.textContent;
+        btn.textContent = 'Đã sao chép ✓';
+        setTimeout(() => { btn.textContent = old; }, 1500);
+      }
+
+      list.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-copy]');
+        if (b) copy(message(rows()[Number(b.dataset.copy)]), b);
+      });
+      $('copy-all').addEventListener('click', (e) => copy(rows().map(message).join('\n\n'), e.currentTarget));
+      $('csv').addEventListener('click', () => {
+        const q = (s) => `"${String(s).replace(/"/g, '""')}"`;
+        const csv = '﻿' + [['Tên khách', 'Link', 'Tin nhắn'].map(q).join(',')]
+          .concat(rows().map((r) => [r.name, r.link, message(r)].map(q).join(','))).join('\r\n');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+        a.download = 'link-moi.csv';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      });
+      [base, names, tpl].forEach((el) => el.addEventListener('input', render));
+      render();
+    })();
+  </script>
+</body>
+</html>

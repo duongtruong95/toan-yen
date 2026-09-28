@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#fafafa"/>
+  <g fill="none" stroke="#9a9a9a" stroke-width="10" stroke-linejoin="round">
+    <rect x="70" y="70" width="80" height="80" rx="10"/>
+    <rect x="250" y="70" width="80" height="80" rx="10"/>
+    <rect x="70" y="250" width="80" height="80" rx="10"/>
+  </g>
+  <g fill="#9a9a9a">
+    <rect x="95" y="95" width="30" height="30" rx="4"/>
+    <rect x="275" y="95" width="30" height="30" rx="4"/>
+    <rect x="95" y="275" width="30" height="30" rx="4"/>
+    <rect x="250" y="250" width="26" height="26" rx="4"/>
+    <rect x="304" y="250" width="26" height="26" rx="4"/>
+    <rect x="277" y="277" width="26" height="26" rx="4"/>
+    <rect x="250" y="304" width="26" height="26" rx="4"/>
+    <rect x="304" y="304" width="26" height="26" rx="4"/>
+  </g>
+  <text x="200" y="208" text-anchor="middle" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="22" fill="#777">Mã QR</text>
+</svg>

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Tiêu đề & mô tả hiển thị khi chia sẻ link (Facebook, Zalo...). Sửa cho khớp với config.js -->
+  <title>Văn Toàn &amp; Nguyễn Yến — Lễ Thành Hôn 20.10.2026</title>
+  <meta name="description" content="Trân trọng kính mời quý vị tới dự Lễ Thành Hôn của Văn Toàn &amp; Nguyễn Yến — 9 giờ, thứ Ba 20/10/2026 tại gia đình nhà trai, 131 La Xuyên, Vũ Dương, Ninh Bình.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Văn Toàn &amp; Nguyễn Yến — Lễ Thành Hôn">
+  <meta property="og:description" content="9 giờ 00, thứ Ba 20/10/2026 (tức ngày 11/9 năm Bính Ngọ) — tại gia đình nhà trai, 131 La Xuyên, Vũ Dương, Ninh Bình.">
+  <!-- Ảnh chia sẻ (đã có sẵn assets/images/cuoi/og-cover.jpg 1200x630). Sau khi đưa web lên mạng,
+       bỏ chú thích dòng dưới và thay bằng ĐƯỜNG DẪN ĐẦY ĐỦ, ví dụ:
+  <meta property="og:image" content="https://ten-mien-cua-ban.com/assets/images/cuoi/og-cover.jpg"> -->
+  <meta name="theme-color" content="#df4758">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bellota+Text:wght@300;400;700&family=Bonheur+Royale&family=Great+Vibes&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <!-- Thanh điều hướng (hiện ra khi cuộn qua ảnh bìa) -->
+  <header class="topbar" id="topbar">
+    <a class="topbar__brand" href="#home" id="brand"></a>
+    <button class="icon-btn" id="menu-btn" type="button" aria-label="Mở mục lục" aria-controls="drawer" aria-expanded="false"></button>
+  </header>
+  <div class="backdrop" id="backdrop"></div>
+  <nav class="drawer" id="drawer" aria-label="Mục lục">
+    <button class="icon-btn drawer__close" id="drawer-close" type="button" aria-label="Đóng mục lục"></button>
+    <p class="drawer__title" id="drawer-title"></p>
+    <ul class="drawer__links" id="drawer-links"></ul>
+  </nav>
+
+  <!-- Nội dung thiệp: mỗi section được dựng từ assets/js/config.js.
+       Muốn đổi thứ tự các phần, chỉ cần đổi thứ tự các thẻ <section> dưới đây. -->
+  <main class="wrapper" id="app">
+    <section class="hero" id="home"></section>
+    <section class="quick" id="quick"></section>
+    <section class="section" id="video" hidden></section>
+    <section class="section" id="album" hidden></section>
+    <section class="section" id="date" hidden></section>
+    <section class="section" id="story" hidden></section>
+    <section class="section" id="letter" hidden></section>
+    <section class="section" id="events" hidden></section>
+    <section class="section" id="couple" hidden></section>
+    <section class="section" id="party" hidden></section>
+    <section class="section" id="gifts" hidden></section>
+    <section class="section" id="wishes" hidden></section>
+    <footer class="section footer" id="footer" hidden></footer>
+    <noscript><p class="noscript">Vui lòng bật JavaScript để xem thiệp cưới.</p></noscript>
+  </main>
+
+  <!-- Nút nổi, nhạc nền, thông báo -->
+  <div class="fab" id="fab"></div>
+  <div class="player" id="player" hidden></div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <!-- Hộp thoại -->
+  <dialog class="modal" id="modal-wish" aria-labelledby="modal-wish-title"></dialog>
+  <dialog class="modal" id="modal-rsvp" aria-labelledby="modal-rsvp-title"></dialog>
+  <dialog class="modal" id="modal-gift" aria-labelledby="modal-gift-title"></dialog>
+  <dialog class="lightbox" id="lightbox" aria-label="Xem ảnh"></dialog>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

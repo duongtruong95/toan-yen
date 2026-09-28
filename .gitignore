@@ -1,0 +1,4 @@
+# Cấu hình công cụ cục bộ, không đưa lên web
+.claude/
+__pycache__/
+*.pyc
