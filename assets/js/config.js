@@ -37,7 +37,7 @@ window.WEDDING = {
 
   /* ---------- Ảnh bìa ---------- */
   hero: {
-    photo: { src: "assets/images/cuoi/anh-bia.webp", w: 1201, h: 1800, srcset: "assets/images/cuoi/anh-bia-800.webp 800w, assets/images/cuoi/anh-bia.webp 1201w", sizes: "(max-width: 575px) calc(100vw - 32px), 543px" },
+    photo: { src: "assets/images/cuoi/anh-bia.webp", w: 1200, h: 1800, srcset: "assets/images/cuoi/anh-bia-800.webp 800w, assets/images/cuoi/anh-bia.webp 1200w", sizes: "(max-width: 575px) calc(100vw - 32px), 543px" },
     before: "Chúng tôi",
     after: "Sắp kết hôn.",
     script: "Wedding"                   // chữ bay bướm đè lên chân ảnh bìa
@@ -110,13 +110,13 @@ window.WEDDING = {
         date: "Tháng 8, 2019",
         title: "Buổi hẹn đầu tiên",
         text: "Quán cà phê nhỏ đầu ngõ, ly nâu đá tan gần hết mà chuyện vẫn chưa dứt. Hôm ấy anh đưa em về dưới trời đầy sao, và cả hai đều biết đây sẽ không phải lần cuối.",
-        photo: { src: "assets/images/cuoi/chuyen-2.webp", focus: "50% 12%" }
+        photo: { src: "assets/images/cuoi/chuyen-2.webp", focus: "50% 15%" }
       },
       {
         date: "Tháng 2, 2025",
         title: "Lời cầu hôn",
         text: "Trên bãi biển lúc bình minh, anh quỳ xuống với chiếc nhẫn đã giấu trong túi áo suốt cả chuyến đi. Em đã khóc, đã cười, và đã nói “Đồng ý”.",
-        photo: { src: "assets/images/cuoi/chuyen-3.webp", focus: "50% 8%" }
+        photo: { src: "assets/images/cuoi/chuyen-3.webp", focus: "50% 10%" }
       },
       {
         date: "Tháng 10, 2026",
@@ -131,7 +131,7 @@ window.WEDDING = {
   letter: {
     title: "Lời Ngỏ",
     text: "Trân trọng kính mời quý vị\ntới dự bữa cơm thân mật,\nchung vui cùng gia đình chúng tôi.\nSự hiện diện của quý vị\nlà niềm vinh hạnh cho gia đình chúng tôi!\nRất hân hạnh được đón tiếp!",
-    photo: { src: "assets/images/cuoi/loi-ngo.webp", focus: "50% 30%" }
+    photo: { src: "assets/images/cuoi/loi-ngo.webp", focus: "50% 35%" }
   },
 
   /* ---------- Sự kiện cưới ----------
@@ -151,7 +151,7 @@ window.WEDDING = {
         address: "Xóm Bến Mới, Tân Phong, Ý Yên, Ninh Bình",
         map: "https://www.google.com/maps/search/?api=1&query=20.3179359,105.9642715",
         lunar: "Tức ngày 10 tháng 09 năm Bính Ngọ",
-        photo: { src: "assets/images/cuoi/tiec-nha-gai.webp", focus: "40% 50%" },
+        photo: { src: "assets/images/cuoi/tiec-nha-gai.webp", focus: "46% 20%" },
         dressCode: []
       },
       {
@@ -162,7 +162,7 @@ window.WEDDING = {
         address: "Xóm Bến Mới, Tân Phong, Ý Yên, Ninh Bình",
         map: "https://www.google.com/maps/search/?api=1&query=20.3179359,105.9642715",
         lunar: "Tức ngày 11 tháng 09 năm Bính Ngọ",
-        photo: { src: "assets/images/cuoi/le-cuoi-nha-gai.webp", focus: "45% 50%" },
+        photo: { src: "assets/images/cuoi/le-cuoi-nha-gai.webp", focus: "48% 10%" },
         dressCode: []
       },
       {
@@ -173,7 +173,7 @@ window.WEDDING = {
         address: "131 La Xuyên, Vũ Dương, Ninh Bình",
         map: "https://www.google.com/maps/search/?api=1&query=20.308177947998047,106.04753875732422",
         lunar: "Tức ngày 11 tháng 09 năm Bính Ngọ",
-        photo: { src: "assets/images/cuoi/le-thanh-hon.webp", focus: "42% 50%" },
+        photo: { src: "assets/images/cuoi/le-thanh-hon.webp", focus: "55% 20%" },
         dressCode: []
       },
       {
@@ -184,7 +184,7 @@ window.WEDDING = {
         address: "131 La Xuyên, Vũ Dương, Ninh Bình",
         map: "https://www.google.com/maps/search/?api=1&query=20.308177947998047,106.04753875732422",
         lunar: "Tức ngày 11 tháng 09 năm Bính Ngọ",
-        photo: { src: "assets/images/cuoi/tiec-nha-trai.webp", focus: "48% 50%" },
+        photo: { src: "assets/images/cuoi/tiec-nha-trai.webp", focus: "45% 13%" },
         dressCode: []
       }
     ]
