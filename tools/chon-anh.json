@@ -6,7 +6,7 @@
     { "from": "khung/MLML8234.jpg", "to": "anh-bia.webp", "max": 1800 },
     { "from": "khung/MLML8234.jpg", "to": "anh-bia-800.webp", "max": 1200 },
     { "from": "60x90/MLML8840.jpg", "to": "loi-ngo.webp", "max": 1600 },
-    { "from": "60x90/MLML8840.jpg", "to": "chu-re.webp", "box": [0.198, 0.113, 0.538, 0.4154], "max": 1000 },
+    { "from": "khung/MLML8931.jpg", "to": "chu-re.webp", "box": [0.223, 0.118, 0.523, 0.3848], "max": 1000 },
     { "from": "khung/MLML8772.jpg", "to": "co-dau.webp", "box": [0.235, 0.04, 0.795, 0.538], "max": 1000 },
     { "from": "khung/MLML8476.jpg", "to": "tiec-nha-gai.webp", "max": 1400 },
     { "from": "ban/MLML9317.jpg", "to": "le-cuoi-nha-gai.webp", "max": 1400 },
