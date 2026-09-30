@@ -77,21 +77,15 @@ window.WEDDING = {
     // src: ảnh lớn khi bấm xem · thumb: ảnh nhỏ trong lưới · w, h: kích thước ảnh nhỏ
     photos: [
       { src: "assets/images/cuoi/album/01.webp", thumb: "assets/images/cuoi/album/nho/01.webp", w: 534, h: 800 },
-      { src: "assets/images/cuoi/album/02.webp", thumb: "assets/images/cuoi/album/nho/02.webp", w: 534, h: 800 },
+      { src: "assets/images/cuoi/album/02.webp", thumb: "assets/images/cuoi/album/nho/02.webp", w: 800, h: 534 },
       { src: "assets/images/cuoi/album/03.webp", thumb: "assets/images/cuoi/album/nho/03.webp", w: 534, h: 800 },
-      { src: "assets/images/cuoi/album/04.webp", thumb: "assets/images/cuoi/album/nho/04.webp", w: 534, h: 800 },
-      { src: "assets/images/cuoi/album/05.webp", thumb: "assets/images/cuoi/album/nho/05.webp", w: 800, h: 534 },
+      { src: "assets/images/cuoi/album/04.webp", thumb: "assets/images/cuoi/album/nho/04.webp", w: 800, h: 534 },
+      { src: "assets/images/cuoi/album/05.webp", thumb: "assets/images/cuoi/album/nho/05.webp", w: 534, h: 800 },
       { src: "assets/images/cuoi/album/06.webp", thumb: "assets/images/cuoi/album/nho/06.webp", w: 534, h: 800 },
-      { src: "assets/images/cuoi/album/07.webp", thumb: "assets/images/cuoi/album/nho/07.webp", w: 800, h: 534 },
+      { src: "assets/images/cuoi/album/07.webp", thumb: "assets/images/cuoi/album/nho/07.webp", w: 534, h: 800 },
       { src: "assets/images/cuoi/album/08.webp", thumb: "assets/images/cuoi/album/nho/08.webp", w: 534, h: 800 },
       { src: "assets/images/cuoi/album/09.webp", thumb: "assets/images/cuoi/album/nho/09.webp", w: 534, h: 800 },
-      { src: "assets/images/cuoi/album/10.webp", thumb: "assets/images/cuoi/album/nho/10.webp", w: 534, h: 800 },
-      { src: "assets/images/cuoi/album/11.webp", thumb: "assets/images/cuoi/album/nho/11.webp", w: 534, h: 800 },
-      { src: "assets/images/cuoi/album/12.webp", thumb: "assets/images/cuoi/album/nho/12.webp", w: 534, h: 800 },
-      { src: "assets/images/cuoi/album/13.webp", thumb: "assets/images/cuoi/album/nho/13.webp", w: 534, h: 800 },
-      { src: "assets/images/cuoi/album/14.webp", thumb: "assets/images/cuoi/album/nho/14.webp", w: 534, h: 800 },
-      { src: "assets/images/cuoi/album/15.webp", thumb: "assets/images/cuoi/album/nho/15.webp", w: 534, h: 800 },
-      { src: "assets/images/cuoi/album/16.webp", thumb: "assets/images/cuoi/album/nho/16.webp", w: 534, h: 800 }
+      { src: "assets/images/cuoi/album/10.webp", thumb: "assets/images/cuoi/album/nho/10.webp", w: 534, h: 800 }
     ]
   },
 
@@ -122,7 +116,7 @@ window.WEDDING = {
         date: "Tháng 10, 2026",
         title: "Về chung một nhà",
         text: "Sau gần tám năm đồng hành, chúng mình quyết định viết tiếp câu chuyện dưới một mái nhà. Cảm ơn vì đã luôn là bến đỗ bình yên của nhau.",
-        photo: { src: "assets/images/cuoi/chuyen-4.webp", focus: "50% 15%" }
+        photo: { src: "assets/images/cuoi/chuyen-4.webp", focus: "50% 30%" }
       }
     ]
   },
