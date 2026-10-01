@@ -4,20 +4,20 @@
  *
  * Cách cài (chi tiết trong README.md, mục "Lưu lời chúc & xác nhận vào Google Sheets"):
  *   1. Tạo một Google Sheet mới → menu Tiện ích mở rộng (Extensions) → Apps Script.
- *   2. Xoá code mẫu, dán toàn bộ file này vào, ĐỔI MAT_KHAU bên dưới, bấm Lưu.
+ *   2. Xoá code mẫu, dán toàn bộ file này vào, bấm Lưu.
  *   3. Triển khai (Deploy) → Tùy chọn triển khai mới (New deployment) → loại "Ứng dụng web" (Web app)
  *        - Thực thi dưới dạng (Execute as): Tôi (Me)
  *        - Người có quyền truy cập (Who has access): Bất kỳ ai (Anyone)
  *   4. Cấp quyền, sao chép URL kết thúc bằng /exec, dán vào api.endpoint trong assets/js/config.js.
  *
- * Xem danh sách khách: mở trang quan-ly.html của thiệp, nhập MAT_KHAU.
+ * Xem danh sách khách: mở trang quan-ly.html của thiệp (không cần mật khẩu).
  * Ẩn một lời chúc không phù hợp: đổi ô cột "Hiển thị" của dòng đó thành FALSE.
  * Sau khi sửa code này, phải Deploy → Quản lý triển khai → chỉnh sửa → Phiên bản mới thì mới có hiệu lực.
  */
 
-// Mật khẩu của trang quan-ly.html (xem danh sách xác nhận & lời chúc). ĐỔI trước khi triển khai,
-// đừng để lộ: ai có mật khẩu sẽ xem được tên và số điện thoại của khách.
-const MAT_KHAU = 'doi-mat-khau-nay';
+// Trang quan-ly.html không có mật khẩu, ai có link đều xem được, nên số điện thoại & email
+// chỉ hiện một phần (0912****678). Số đầy đủ vẫn nằm trong bảng tính. Đặt false để hiện đầy đủ.
+const AN_BOT_LIEN_LAC = true;
 
 const SHEETS = {
   wish: { name: 'LoiChuc', headers: ['Thời gian', 'Họ tên', 'Email', 'Lời chúc', 'Hiển thị'] },
@@ -54,7 +54,7 @@ function doPost(e) {
     return json_({ ok: false, error: 'Dữ liệu không hợp lệ' });
   }
   if (body.website) return json_({ ok: true }); // ô bẫy chống bot
-  if (body.type === 'admin') return admin_(body);
+  if (body.type === 'admin') return admin_();
 
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
@@ -82,24 +82,46 @@ function doPost(e) {
   }
 }
 
-// Trang quan-ly.html: trả toàn bộ xác nhận & lời chúc khi đúng mật khẩu
-function admin_(body) {
-  if (!MAT_KHAU || MAT_KHAU === 'doi-mat-khau-nay') {
-    return json_({ ok: false, error: 'Chưa đặt mật khẩu: sửa dòng MAT_KHAU trong Apps Script rồi triển khai phiên bản mới.' });
-  }
-  if (String(body.key || '') !== MAT_KHAU) {
-    Utilities.sleep(1500); // làm chậm việc dò mật khẩu
-    return json_({ ok: false, error: 'Sai mật khẩu' });
-  }
-  const rsvp = rows_('rsvp').map((r) => ({
-    time: time_(r[0]), name: String(r[1]), phone: String(r[2]), attend: String(r[3]),
-    guests: Number(r[4]) || 0, side: String(r[5]), note: String(r[6]),
-  }));
+// Trang quan-ly.html: trả toàn bộ xác nhận & lời chúc (số điện thoại, email đã ẩn bớt)
+function admin_() {
+  // Khách gửi nhiều lần: đánh dấu các lần cũ (old) bằng số điện thoại đầy đủ, không có số thì theo tên
+  const seen = {};
+  const rsvp = rows_('rsvp')
+    .map((r) => ({
+      time: time_(r[0]), name: String(r[1]), phone: String(r[2]), attend: String(r[3]),
+      guests: Number(r[4]) || 0, side: String(r[5]), note: String(r[6]),
+    }))
+    .sort((a, b) => (a.time < b.time ? 1 : a.time > b.time ? -1 : 0))
+    .map((r) => {
+      const d = r.phone.replace(/\D/g, '');
+      const id = d.length >= 9 ? 'p' + d.slice(-9) : 'n' + fold_(r.name);
+      const old = seen[id] === true;
+      seen[id] = true;
+      return Object.assign(r, { phone: AN_BOT_LIEN_LAC ? maskPhone_(r.phone) : r.phone, old });
+    });
   const wishes = rows_('wish').map((r) => ({
-    time: time_(r[0]), name: String(r[1]), email: String(r[2]), message: String(r[3]),
-    visible: String(r[4]).toUpperCase() !== 'FALSE',
+    time: time_(r[0]), name: String(r[1]), email: AN_BOT_LIEN_LAC ? maskEmail_(r[2]) : String(r[2]),
+    message: String(r[3]), visible: String(r[4]).toUpperCase() !== 'FALSE',
   }));
   return json_({ ok: true, rsvp, wishes });
+}
+
+function fold_(s) {
+  return String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd')
+    .toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function maskPhone_(v) {
+  const d = String(v).replace(/\D/g, '');
+  if (!d) return '';
+  return d.length < 7 ? '***' : d.slice(0, 4) + '****' + d.slice(-3);
+}
+
+function maskEmail_(v) {
+  const s = String(v);
+  const at = s.indexOf('@');
+  if (!s) return '';
+  return at < 1 ? '***' : s.slice(0, Math.min(2, at)) + '***' + s.slice(at);
 }
 
 function rows_(key) {

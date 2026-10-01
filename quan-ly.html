@@ -16,13 +16,8 @@
     h1 { margin: 0; font: 400 3rem/1.2 "Bonheur Royale", cursive; text-align: center; color: #474747; }
     .lead { margin: 4px 0 28px; text-align: center; color: var(--muted); }
     .card { margin-bottom: 16px; padding: 20px; border-radius: 10px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .06); }
-    .login { max-width: 420px; margin: 0 auto 16px; }
-    label { display: block; margin-bottom: 6px; font-weight: 400; }
-    .check { display: flex; gap: 8px; align-items: center; margin: 10px 0 14px; font-size: 14px; color: var(--muted); }
-    .check input { width: auto; }
     input, select { width: 100%; padding: 9px 12px; border: 1px solid #d6d6d6; border-radius: 6px; font: inherit; font-weight: 400; background: #fff; }
     input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(223, 71, 88, .15); }
-    .msg { min-height: 1.6em; margin: 10px 0 0; font-size: 14px; color: var(--accent); }
     .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1px solid #636363; border-radius: 6px; background: #636363; color: #fff; font: inherit; font-size: 14px; font-weight: 400; cursor: pointer; text-decoration: none; }
     .btn:hover { background: #4b4b4b; }
     .btn:disabled { opacity: .6; cursor: wait; }
@@ -71,7 +66,7 @@
     }
     @media print {
       body { background: #fff; }
-      .login, .actions, .filters, .tabs, .notice { display: none !important; }
+      .actions, .filters, .tabs, .notice { display: none !important; }
       .card { box-shadow: none; padding: 0; }
     }
   </style>
@@ -81,14 +76,12 @@
     <h1>Khách mời</h1>
     <p class="lead" id="couple">Danh sách xác nhận tham dự &amp; lời chúc</p>
 
-    <section class="card login" id="login" hidden>
-      <form id="login-form">
-        <label for="key">Mật khẩu xem danh sách</label>
-        <input id="key" type="password" autocomplete="current-password" required>
-        <label class="check"><input id="remember" type="checkbox" checked> Ghi nhớ trên máy này</label>
-        <button class="btn btn--accent" type="submit">Xem danh sách</button>
-        <p class="msg" id="login-msg" role="status"></p>
-      </form>
+    <section class="card notice" id="loading">Đang tải danh sách…</section>
+
+    <section class="card notice" id="error" hidden>
+      <b>Chưa tải được danh sách.</b>
+      <p id="error-msg"></p>
+      <p><button class="btn btn--accent" type="button" id="retry">Thử lại</button></p>
     </section>
 
     <section class="card notice" id="demo" hidden>
@@ -116,7 +109,6 @@
             <button class="btn btn--ghost" type="button" id="reload">Tải lại</button>
             <button class="btn btn--ghost" type="button" id="json">Tải file JSON</button>
             <button class="btn btn--ghost" type="button" id="csv">Tải Excel (CSV)</button>
-            <button class="btn btn--ghost" type="button" id="logout">Thoát</button>
           </div>
         </div>
         <div class="filters">

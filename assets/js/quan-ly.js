@@ -1,5 +1,6 @@
 /* Trang quan-ly.html: danh sách xác nhận tham dự & lời chúc cho cô dâu chú rể.
-   Có api.endpoint (Google Apps Script): tải dữ liệu thật, cần mật khẩu MAT_KHAU đặt trong Code.gs.
+   Có api.endpoint (Google Apps Script): tải dữ liệu thật ngay khi mở trang (không cần mật khẩu;
+   số điện thoại & email được Apps Script ẩn bớt, số đầy đủ xem trong Google Sheet).
    Chưa có: chế độ demo, đọc dữ liệu gửi thử lưu trên trình duyệt này. */
 (function () {
   'use strict';
@@ -19,18 +20,10 @@
   const couple = [groom.name, bride.name].filter(Boolean).join(' & ');
   const SLUG = slugify(`${groom.name || ''}-${bride.name || ''}`) || 'wedding'; // giống app.js
   const API = String((C.api && C.api.endpoint) || '').trim();
-  const KEY = `quan-ly:${SLUG}:key`;
-
-  const store = {
-    get() { try { return localStorage.getItem(KEY) || sessionStorage.getItem(KEY) || ''; } catch (e) { return ''; } },
-    set(v, remember) { try { (remember ? localStorage : sessionStorage).setItem(KEY, v); } catch (e) { /* bộ nhớ bị chặn */ } },
-    del() { try { localStorage.removeItem(KEY); sessionStorage.removeItem(KEY); } catch (e) { /* bỏ qua */ } },
-  };
   const local = (k) => { try { return JSON.parse(localStorage.getItem(k)) || []; } catch (e) { return []; } };
 
   let data = { rsvp: [], wishes: [] };
   let tab = 'rsvp';
-  let key = '';
   let loadedAt = null;
 
   const fmt = (v) => {
@@ -38,6 +31,7 @@
     return isNaN(d) ? '' : `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
   };
   const newestFirst = (a, b) => (Date.parse(b.time) || 0) - (Date.parse(a.time) || 0);
+  const masked = (s) => String(s).includes('*');
 
   function normRsvp(r) {
     const attend = r.attend === 'no' || r.attend === 'Không' ? 'Không' : 'Có';
@@ -49,6 +43,7 @@
       guests: attend === 'Có' ? Math.max(1, parseInt(r.guests, 10) || 1) : 0,
       side: String(r.side || ''),
       note: String(r.note || ''),
+      old: typeof r.old === 'boolean' ? r.old : undefined,
     };
   }
   const normWish = (w) => ({
@@ -56,10 +51,13 @@
     message: String(w.message || ''), visible: w.visible !== false,
   });
 
-  // Một khách gửi nhiều lần: chỉ tính lần mới nhất (cùng số điện thoại, không có số thì cùng tên)
+  // Một khách gửi nhiều lần: chỉ tính lần mới nhất. Apps Script đã đánh dấu sẵn (old) bằng số điện thoại
+  // đầy đủ; ở chế độ demo thì tự tính: cùng số điện thoại, không có số thì cùng tên.
   function markOld(list) {
+    list.sort(newestFirst);
+    if (list.every((r) => typeof r.old === 'boolean')) return list;
     const seen = new Set();
-    list.sort(newestFirst).forEach((r) => {
+    list.forEach((r) => {
       const p = digits(r.phone);
       const id = p.length >= 9 ? `p${p.slice(-9)}` : `n${fold(r.name)}`;
       r.old = seen.has(id);
@@ -68,12 +66,12 @@
     return list;
   }
 
-  async function fetchData(k) {
+  async function fetchData() {
     if (!API) return { demo: true, rsvp: local(`thiep:${SLUG}:rsvp`), wishes: local(`thiep:${SLUG}:wishes`) };
     let json;
     try {
-      // text/plain để tránh CORS preflight với Google Apps Script; mật khẩu nằm trong thân, không nằm trên URL
-      const res = await fetch(API, { method: 'POST', body: JSON.stringify({ type: 'admin', key: k }) });
+      // text/plain để tránh CORS preflight với Google Apps Script
+      const res = await fetch(API, { method: 'POST', body: JSON.stringify({ type: 'admin' }) });
       json = await res.json();
     } catch (e) {
       throw new Error('Không kết nối được tới Google Sheets, bạn thử lại sau ít phút nhé.');
@@ -82,19 +80,24 @@
     return json;
   }
 
-  async function load(k) {
-    const json = await fetchData(k);
-    data = {
-      rsvp: markOld((json.rsvp || []).map(normRsvp)),
-      wishes: (json.wishes || []).map(normWish).sort(newestFirst),
-    };
-    key = k;
-    loadedAt = new Date();
-    $('demo').hidden = !json.demo;
-    $('logout').hidden = !API;
-    $('login').hidden = true;
-    $('app').hidden = false;
-    render();
+  async function load() {
+    try {
+      const json = await fetchData();
+      data = {
+        rsvp: markOld((json.rsvp || []).map(normRsvp)),
+        wishes: (json.wishes || []).map(normWish).sort(newestFirst),
+      };
+      loadedAt = new Date();
+      $('demo').hidden = !json.demo;
+      $('error').hidden = true;
+      $('app').hidden = false;
+      render();
+    } catch (err) {
+      $('error-msg').textContent = err.message;
+      $('error').hidden = false;
+    } finally {
+      $('loading').hidden = true;
+    }
   }
 
   function summary() {
@@ -127,6 +130,9 @@
       && matches(`${r.name} ${r.phone} ${r.note}`, q, r.phone));
   }
 
+  const phoneCell = (p) => (!p ? '' : masked(p) ? esc(p)
+    : `<a href="tel:${esc(p.replace(/[^\d+]/g, ''))}">${esc(p)}</a>`);
+
   function render() {
     const s = summary();
     $('s-guests').textContent = s.attending_guests;
@@ -147,7 +153,7 @@
           <td class="idx">${i + 1}</td>
           <td data-label="Thời gian">${esc(fmt(r.time))}</td>
           <td data-label="Họ tên"><b>${esc(r.name)}</b>${r.old ? ' <span class="badge">lần gửi cũ</span>' : ''}</td>
-          <td data-label="Điện thoại">${r.phone ? `<a href="tel:${esc(r.phone.replace(/[^\d+]/g, ''))}">${esc(r.phone)}</a>` : ''}</td>
+          <td data-label="Điện thoại">${phoneCell(r.phone)}</td>
           <td data-label="Tham dự"><span class="badge${r.attend === 'Có' ? ' badge--yes' : ''}">${r.attend === 'Có' ? 'Sẽ đến' : 'Không đến'}</span></td>
           <td class="num" data-label="Số người">${r.guests || ''}</td>
           <td data-label="Khách của">${esc(r.side)}</td>
@@ -159,7 +165,7 @@
           <td class="idx">${i + 1}</td>
           <td data-label="Thời gian">${esc(fmt(w.time))}</td>
           <td data-label="Họ tên"><b>${esc(w.name)}</b></td>
-          <td data-label="Email">${w.email ? `<a href="mailto:${esc(w.email)}">${esc(w.email)}</a>` : ''}</td>
+          <td data-label="Email">${w.email && !masked(w.email) ? `<a href="mailto:${esc(w.email)}">${esc(w.email)}</a>` : esc(w.email)}</td>
           <td class="wrap" data-label="Lời chúc">${esc(w.message)}</td>
           <td data-label="Hiển thị">${w.visible ? 'Có' : '<span class="badge">Đã ẩn</span>'}</td>
         </tr>`).join('')}</tbody>`;
@@ -168,8 +174,10 @@
     $('empty').hidden = rows.length > 0;
     $('empty').textContent = total ? 'Không có dòng nào khớp với bộ lọc.'
       : tab === 'rsvp' ? 'Chưa có khách nào xác nhận.' : 'Chưa có lời chúc nào.';
+    const hidden = data.rsvp.some((r) => masked(r.phone)) || data.wishes.some((w) => masked(w.email));
     $('updated').textContent = `Cập nhật lúc ${fmt(loadedAt)}.`
-      + (tab === 'rsvp' ? ' Khách gửi nhiều lần chỉ được tính lần mới nhất, các dòng mờ là lần gửi cũ.' : '');
+      + (tab === 'rsvp' ? ' Khách gửi nhiều lần chỉ được tính lần mới nhất, các dòng mờ là lần gửi cũ.' : '')
+      + (hidden ? ' Số điện thoại và email chỉ hiện một phần, xem đầy đủ trong Google Sheet.' : '');
   }
 
   function download(name, text, type) {
@@ -201,60 +209,22 @@
     download(`${tab === 'rsvp' ? 'xac-nhan-tham-du' : 'loi-chuc'}-${SLUG}-${stamp()}.csv`, csv, 'text/csv;charset=utf-8');
   }
 
-  function showLogin(message) {
-    $('app').hidden = true;
-    $('login').hidden = false;
-    $('login-msg').textContent = message || '';
-    $('key').focus();
+  async function reload(btn) {
+    btn.disabled = true;
+    const label = btn.textContent;
+    btn.textContent = 'Đang tải…';
+    await load();
+    btn.disabled = false;
+    btn.textContent = label;
   }
 
-  $('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const k = $('key').value;
-    const btn = e.submitter || $('login-form').querySelector('button');
-    btn.disabled = true;
-    $('login-msg').textContent = 'Đang kiểm tra…';
-    try {
-      await load(k);
-      store.set(k, $('remember').checked);
-      $('key').value = '';
-    } catch (err) {
-      $('login-msg').textContent = err.message;
-    } finally {
-      btn.disabled = false;
-    }
-  });
-
-  $('reload').addEventListener('click', async (e) => {
-    const btn = e.currentTarget;
-    btn.disabled = true;
-    btn.textContent = 'Đang tải…';
-    try {
-      await load(key);
-    } catch (err) {
-      if (/mật khẩu/i.test(err.message)) { store.del(); showLogin(err.message); } else alert(err.message);
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Tải lại';
-    }
-  });
-  $('logout').addEventListener('click', () => {
-    store.del();
-    data = { rsvp: [], wishes: [] };
-    key = '';
-    showLogin('');
-  });
+  $('reload').addEventListener('click', (e) => reload(e.currentTarget));
+  $('retry').addEventListener('click', (e) => reload(e.currentTarget));
   $('json').addEventListener('click', exportJson);
   $('csv').addEventListener('click', exportCsv);
   document.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => { tab = b.dataset.tab; render(); }));
   ['q', 'f-attend', 'f-side'].forEach((id) => $(id).addEventListener('input', render));
 
   if (couple) $('couple').textContent = `Danh sách xác nhận tham dự & lời chúc · ${couple}`;
-  if (!API) {
-    load('');
-  } else {
-    const saved = store.get();
-    if (!saved) showLogin('');
-    else load(saved).catch((err) => { if (/mật khẩu/i.test(err.message)) store.del(); showLogin(err.message); });
-  }
+  load();
 })();
