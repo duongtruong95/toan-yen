@@ -1,3 +1,4 @@
+/** @OnlyCurrentDoc Chỉ được truy cập bảng tính chứa script này */
 /**
  * Backend miễn phí cho thiệp cưới: lưu Lời chúc & Xác nhận tham dự vào Google Sheets.
  *

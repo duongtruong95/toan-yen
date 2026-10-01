@@ -253,6 +253,7 @@ window.WEDDING = {
      Dán link Web App của Google Apps Script (xem README.md). Để "" = chế độ demo:
      dữ liệu chỉ lưu trên trình duyệt của người gửi. */
   api: {
-    endpoint: ""
+    // Apps Script "Thiệp cưới Toàn Yến", ghi vào bảng tính "Thiệp cưới Toàn Yến - Khách mời"
+    endpoint: "https://script.google.com/macros/s/AKfycbzWs3VFSK-PNudhdtX6AJXB736lC8lpT-gWMCQLuhi0K_n18grsrz8p5lJK2WC24EUP/exec"
   }
 };
