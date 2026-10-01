@@ -29,9 +29,11 @@ Không cần cài đặt, không cần build, không dùng thư viện: chỉ HT
 ```
 index.html                 Khung trang (tiêu đề, ảnh chia sẻ, thứ tự các phần)
 tao-link.html              Công cụ tạo link mời riêng cho danh sách khách
+quan-ly.html               Trang danh sách khách mời cho cô dâu chú rể (cần mật khẩu)
 assets/
   js/config.js             ★ NỘI DUNG THIỆP — file duy nhất cần sửa
   js/app.js                Mã dựng trang & tương tác
+  js/quan-ly.js            Mã trang danh sách khách mời
   css/style.css            Giao diện (màu, font ở đầu file)
   images/                  Ảnh (đang là ảnh giữ chỗ .svg)
   music/                   Nhạc nền (tự thêm file mp3)
@@ -144,7 +146,8 @@ Có nhiều khách? Mở `tao-link.html`, dán danh sách tên (mỗi dòng mộ
 Khi `api.endpoint` để trống, trang chạy ở **chế độ demo**: lời chúc và xác nhận chỉ lưu trên trình duyệt của người gửi, bạn **không nhận được** dữ liệu. Để nhận dữ liệu thật:
 
 1. Tạo một Google Sheet mới (ví dụ “Thiệp cưới”).
-2. Menu **Tiện ích mở rộng → Apps Script**. Xoá code mẫu, dán toàn bộ nội dung `google-apps-script/Code.gs`, bấm **Lưu**.
+2. Menu **Tiện ích mở rộng → Apps Script**. Xoá code mẫu, dán toàn bộ nội dung `google-apps-script/Code.gs`,
+   đổi dòng `const MAT_KHAU = 'doi-mat-khau-nay';` thành mật khẩu riêng (dùng để mở trang danh sách khách), bấm **Lưu**.
 3. Bấm **Triển khai → Tùy chọn triển khai mới**, chọn loại **Ứng dụng web**:
    - Thực thi dưới dạng: **Tôi**
    - Người có quyền truy cập: **Bất kỳ ai**
@@ -158,6 +161,18 @@ Khi `api.endpoint` để trống, trang chạy ở **chế độ demo**: lời c
 Lời chúc vào trang tính `LoiChuc`, xác nhận tham dự vào `XacNhan` (tự tạo ở lần gửi đầu tiên).
 Muốn ẩn một lời chúc không phù hợp: đổi ô cột **Hiển thị** của dòng đó thành `FALSE`.
 Nếu sửa `Code.gs`, cần **Triển khai → Quản lý các lượt triển khai → Chỉnh sửa → Phiên bản mới** thì thay đổi mới có hiệu lực.
+
+## Trang danh sách khách mời
+
+Cô dâu chú rể mở `https://yentoanwedding.website/quan-ly.html` (thiệp không có đường dẫn tới trang này, máy tìm kiếm cũng không hiện) và nhập mật khẩu `MAT_KHAU`:
+
+- Tổng số khách sẽ đến, khách nhà trai, khách nhà gái, số người báo không đến, số lời chúc.
+- Bảng xác nhận tham dự và bảng lời chúc: tìm theo tên hoặc số điện thoại, lọc theo nhà trai/nhà gái, bấm số điện thoại để gọi.
+- Khách gửi nhiều lần chỉ được tính lần mới nhất (cùng số điện thoại, không có số thì cùng tên); các lần gửi cũ hiện mờ.
+- **Tải file JSON** (toàn bộ dữ liệu) hoặc **Tải Excel (CSV)** để lưu trữ, in danh sách.
+
+Mật khẩu chỉ nằm trong Apps Script, không nằm trong mã nguồn trên GitHub. Ai có mật khẩu sẽ xem được tên và số điện thoại của khách, nên đừng gửi mật khẩu qua nhóm chat chung.
+Khi chưa kết nối Google Sheets, trang chỉ hiện dữ liệu gửi thử trên chính trình duyệt đang mở.
 
 ## Đưa lên mạng (miễn phí)
 
