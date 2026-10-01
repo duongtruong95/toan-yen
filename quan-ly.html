@@ -57,6 +57,8 @@
     .badge--yes { background: var(--yes-bg); color: var(--yes); }
     .empty { margin: 16px 0 6px; color: var(--muted); text-align: center; }
     @media (max-width: 720px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .stat--main { grid-column: 1 / -1; }
       .filters { grid-template-columns: 1fr 1fr; }
       .filters input { grid-column: 1 / -1; }
       thead { display: none; }
@@ -65,7 +67,7 @@
       td { padding: 2px 0; border: 0; }
       td.num { text-align: left; }
       td[data-label]::before { content: attr(data-label) ": "; color: var(--muted); }
-      td.idx { display: none; }
+      td.idx, td:empty { display: none; }
     }
     @media print {
       body { background: #fff; }
