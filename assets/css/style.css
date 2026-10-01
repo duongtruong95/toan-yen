@@ -114,6 +114,7 @@ b, strong { font-weight: 700; }
   margin: 8px auto 28px;
   font-size: 1.1rem;
   text-align: center;
+  white-space: pre-line;
 }
 .section__title + :not(.section__sub) { margin-top: 28px; }
 .center { margin-top: 20px; text-align: center; }
@@ -310,7 +311,9 @@ b, strong { font-weight: 700; }
 /* chấm tròn nằm đúng tâm đường kẻ 3px: -(padding .tl + padding .tl__info + 10.5px) + 1.5px */
 .tl:nth-child(odd) .tl__title::before { left: -45px; }
 .tl:nth-child(even) .tl__title::before { right: -45px; }
-.tl__text { margin: 0; }
+/* Đoạn dài: canh đều hai bên, dòng cuối vẫn theo phía của mốc (trái/phải) */
+.tl__text { margin: 0; white-space: pre-line; text-align: justify; }
+.tl:nth-child(even) .tl__text { text-align-last: right; }
 .tl__img { overflow: hidden; border-radius: 20px; }
 .tl__img img { width: 100%; aspect-ratio: 1; object-fit: cover; }
 

@@ -89,33 +89,30 @@ window.WEDDING = {
     ]
   },
 
-  /* ---------- Chuyện tình yêu ---------- */
+  /* ---------- Chuyện tình yêu ----------
+     date: mốc thời gian (tuỳ chọn, bỏ trống thì không hiện). Xuống dòng bằng \n, cách đoạn bằng \n\n */
   story: {
     title: "Chuyện tình yêu",
-    subtitle: "Từ hai người xa lạ, chúng mình đã cùng nhau đi qua bao mùa thương nhớ.",
+    subtitle: "Bạn có tin vào định mệnh? Nếu không, hãy nghe câu chuyện tình yêu của chúng mình: Văn Toàn & Nguyễn Yến nhé!\nTừ hai người xa lạ, chúng mình quen nhau, gặp gỡ, nên duyên và bây giờ là về chung một nhà.",
     items: [
       {
-        date: "Tháng 3, 2019",
-        title: "Lần đầu gặp gỡ",
-        text: "Một buổi chiều mưa ở thư viện trường, hai đứa cùng với tay lấy một cuốn sách. Anh nhường, em cười — và câu chuyện bắt đầu từ một lời cảm ơn rất khẽ.",
+        title: "Quen nhau",
+        text: "Từ những tin nhắn làm quen đầu tiên, đến những lời hỏi thăm ân cần khi em bị cảm cúm. Từ lời quan tâm đến tình hình sức khoẻ khi em dạy tụi nhỏ ở nhà đến lời vỗ về yêu thương cháu Nhật – con của anh trai em về nghỉ hè với cô – đã thu phục được trái tim em.\n\nĐối với anh, ngày biết đến em và được làm quen với em, thời gian tuy không phải là quá dài, nhưng cũng đủ để hai trái tim xa lạ dần trở nên gần gũi, đủ để những rung động trong anh ngày một rõ ràng hơn.",
         photo: { src: "assets/images/cuoi/chuyen-1.webp", focus: "50% 12%" }
       },
       {
-        date: "Tháng 8, 2019",
-        title: "Buổi hẹn đầu tiên",
-        text: "Quán cà phê nhỏ đầu ngõ, ly nâu đá tan gần hết mà chuyện vẫn chưa dứt. Hôm ấy anh đưa em về dưới trời đầy sao, và cả hai đều biết đây sẽ không phải lần cuối.",
+        title: "Buổi hẹn hò đầu tiên",
+        text: "Anh đã rất tinh tế chọn quán cà phê thuận đường đi của em, anh chọn bạc xỉu, em thì anh chọn bơ già dừa non, ngồi bên nhau bao câu chuyện được chia sẻ. Thời gian trôi nhanh mà chuyện chưa đến hồi kết. Hôm ấy, anh đưa em về tận nhà, mặc dù 2 đứa ngược đường nhau.\n\nAnh vẫn nhớ lần đầu tiên được nói chuyện với em. Khi ấy, có lẽ em chẳng hề biết rằng anh đã bị ấn tượng bởi một điều rất giản dị — đó là giọng nói của em. Một giọng nói nhẹ nhàng, ấm áp và rất dễ khiến người ta muốn lắng nghe thêm một chút nữa. Lúc đó anh cũng không nghĩ rằng một giọng nói mình chỉ vừa nghe lần đầu lại có thể để lại trong lòng mình một cảm giác đặc biệt đến như vậy.",
         photo: { src: "assets/images/cuoi/chuyen-2.webp", focus: "50% 15%" }
       },
       {
-        date: "Tháng 2, 2025",
-        title: "Lời cầu hôn",
-        text: "Trên bãi biển lúc bình minh, anh quỳ xuống với chiếc nhẫn đã giấu trong túi áo suốt cả chuyến đi. Em đã khóc, đã cười, và đã nói “Đồng ý”.",
+        title: "Lời yêu",
+        text: "Em yêu anh vì sự tử tế, chăm chỉ, chân thành vốn có của anh.\n\nCòn anh, từ những câu chuyện đầu tiên, những lần trò chuyện sau đó, anh dần muốn biết thêm về em, muốn được nghe em nói nhiều hơn, muốn mỗi ngày đều có một lý do để được hỏi han và trò chuyện cùng em. Có lẽ tình yêu đôi khi bắt đầu từ những điều rất nhỏ. Một ánh nhìn, một nụ cười, một giọng nói, hay đơn giản chỉ là cảm giác bình yên khi được nói chuyện với một người. Và với anh, em đã bước vào cuộc sống của anh nhẹ nhàng như thế.",
         photo: { src: "assets/images/cuoi/chuyen-3.webp", focus: "50% 10%" }
       },
       {
-        date: "Tháng 10, 2026",
         title: "Về chung một nhà",
-        text: "Sau gần tám năm đồng hành, chúng mình quyết định viết tiếp câu chuyện dưới một mái nhà. Cảm ơn vì đã luôn là bến đỗ bình yên của nhau.",
+        text: "Tình yêu và hôn nhân không quan trọng học thức, địa vị, giàu nghèo. Mà quan trọng ở sự tâm đầu ý hợp, quan tâm và thấu hiểu lẫn nhau. Cảm ơn nhau vì đã chờ đợi đủ lâu để gặp được nhau, thương, hiểu, và yêu nhau. Trân trọng vì là bến đỗ bình yên của cuộc đời nhau.",
         photo: { src: "assets/images/cuoi/chuyen-4.webp", focus: "50% 30%" }
       }
     ]
