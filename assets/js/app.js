@@ -491,19 +491,29 @@
     get(k) { try { return JSON.parse(localStorage.getItem(k)) || []; } catch (e) { return []; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* bộ nhớ bị chặn */ } },
   };
+  // Gọi Apps Script có giới hạn thời gian: kết nối bị treo thì huỷ, không để khách chờ mãi
+  async function getJson(url, opts, ms) {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), ms);
+    try {
+      const res = await fetch(url, { ...opts, signal: ctl.signal });
+      return await res.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  }
   const Store = {
     async wishes() {
       if (!API) {
         const samples = ((C.wishes && C.wishes.samples) || []).filter((w) => w && w.name && w.message);
         return LS.get(KEY_WISH).concat(samples);
       }
-      // Chỉ đọc nên tự thử lại khi Apps Script lỗi tạm thời
+      // Chỉ đọc nên tự thử lại khi Apps Script lỗi tạm thời hoặc mạng treo
       let json;
       for (let i = 0; i < 3 && !json; i++) {
         if (i) await new Promise((r) => setTimeout(r, 1500 * i));
         try {
-          const res = await fetch(`${API}${API.includes('?') ? '&' : '?'}action=wishes`, { cache: 'no-store' });
-          json = await res.json();
+          json = await getJson(`${API}${API.includes('?') ? '&' : '?'}action=wishes`, { cache: 'no-store' }, 15000);
         } catch (e) { /* thử lại */ }
       }
       if (!json || !json.ok) throw new Error((json && json.error) || 'Không tải được lời chúc');
@@ -515,9 +525,13 @@
         LS.set(key, [{ ...data, time: new Date().toISOString() }].concat(LS.get(key)).slice(0, 200));
         return { ok: true, demo: true };
       }
-      // text/plain để tránh CORS preflight với Google Apps Script
-      const res = await fetch(API, { method: 'POST', body: JSON.stringify({ type, ...data }) });
-      const json = await res.json();
+      let json;
+      try {
+        // text/plain để tránh CORS preflight với Google Apps Script
+        json = await getJson(API, { method: 'POST', body: JSON.stringify({ type, ...data }) }, 25000);
+      } catch (e) {
+        throw new Error(e.name === 'AbortError' ? 'mạng chậm' : 'không kết nối được');
+      }
       if (!json.ok) throw new Error(json.error || 'Gửi không thành công');
       return json;
     },

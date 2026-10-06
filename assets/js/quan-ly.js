@@ -66,16 +66,27 @@
     return list;
   }
 
+  // fetch có giới hạn thời gian: kết nối bị treo thì huỷ để thử lại
+  async function getJson(url, opts, ms) {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), ms);
+    try {
+      const res = await fetch(url, { ...opts, signal: ctl.signal });
+      return await res.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   async function fetchData() {
     if (!API) return { demo: true, rsvp: local(`thiep:${SLUG}:rsvp`), wishes: local(`thiep:${SLUG}:wishes`) };
-    // Apps Script thỉnh thoảng lỗi tạm thời (khởi động chậm, quá tải): tự thử lại vài lần trước khi báo lỗi
+    // Apps Script thỉnh thoảng lỗi tạm thời (khởi động chậm, quá tải, mạng treo): tự thử lại vài lần trước khi báo lỗi
     let json;
     for (let i = 0; i < 3 && !json; i++) {
       if (i) await new Promise((r) => setTimeout(r, 1500 * i));
       try {
         // text/plain để tránh CORS preflight với Google Apps Script
-        const res = await fetch(API, { method: 'POST', body: JSON.stringify({ type: 'admin' }) });
-        json = await res.json();
+        json = await getJson(API, { method: 'POST', body: JSON.stringify({ type: 'admin' }) }, 15000);
       } catch (e) { /* thử lại */ }
     }
     if (!json) throw new Error('Không kết nối được tới Google Sheets, bạn thử lại sau ít phút nhé.');
