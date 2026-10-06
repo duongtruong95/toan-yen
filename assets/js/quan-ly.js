@@ -68,14 +68,17 @@
 
   async function fetchData() {
     if (!API) return { demo: true, rsvp: local(`thiep:${SLUG}:rsvp`), wishes: local(`thiep:${SLUG}:wishes`) };
+    // Apps Script thỉnh thoảng lỗi tạm thời (khởi động chậm, quá tải): tự thử lại vài lần trước khi báo lỗi
     let json;
-    try {
-      // text/plain để tránh CORS preflight với Google Apps Script
-      const res = await fetch(API, { method: 'POST', body: JSON.stringify({ type: 'admin' }) });
-      json = await res.json();
-    } catch (e) {
-      throw new Error('Không kết nối được tới Google Sheets, bạn thử lại sau ít phút nhé.');
+    for (let i = 0; i < 3 && !json; i++) {
+      if (i) await new Promise((r) => setTimeout(r, 1500 * i));
+      try {
+        // text/plain để tránh CORS preflight với Google Apps Script
+        const res = await fetch(API, { method: 'POST', body: JSON.stringify({ type: 'admin' }) });
+        json = await res.json();
+      } catch (e) { /* thử lại */ }
     }
+    if (!json) throw new Error('Không kết nối được tới Google Sheets, bạn thử lại sau ít phút nhé.');
     if (!json.ok) throw new Error(json.error || 'Không tải được dữ liệu');
     return json;
   }

@@ -497,9 +497,16 @@
         const samples = ((C.wishes && C.wishes.samples) || []).filter((w) => w && w.name && w.message);
         return LS.get(KEY_WISH).concat(samples);
       }
-      const res = await fetch(`${API}${API.includes('?') ? '&' : '?'}action=wishes`, { cache: 'no-store' });
-      const json = await res.json();
-      if (!json.ok) throw new Error(json.error || 'Không tải được lời chúc');
+      // Chỉ đọc nên tự thử lại khi Apps Script lỗi tạm thời
+      let json;
+      for (let i = 0; i < 3 && !json; i++) {
+        if (i) await new Promise((r) => setTimeout(r, 1500 * i));
+        try {
+          const res = await fetch(`${API}${API.includes('?') ? '&' : '?'}action=wishes`, { cache: 'no-store' });
+          json = await res.json();
+        } catch (e) { /* thử lại */ }
+      }
+      if (!json || !json.ok) throw new Error((json && json.error) || 'Không tải được lời chúc');
       return json.data || [];
     },
     async send(type, data) {
